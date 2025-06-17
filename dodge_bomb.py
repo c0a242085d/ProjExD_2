@@ -57,6 +57,29 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         bb_img.set_colorkey((0, 0, 0))
         bb_imgs.append(bb_img)
     return bb_imgs, bb_accs
+
+def get_kk_img(sum_mv: tuple[int, int], base_img: pg.Surface) -> pg.Surface:
+    """
+    移動量に応じた向きのこうかとん画像Surfaceを返す
+    sum_mv: 押下キーの合計移動量 (dx, dy)
+    base_img: 元となるこうかとん画像
+    戻り値: 向きを反映したSurface
+    """
+    flipped = pg.transform.flip(base_img, True, False)
+    kk_imgs = {
+        (0, 0): base_img,
+        (-5, 0): base_img,
+        (-5, -5): pg.transform.rotozoom(base_img, 45, 1.0),
+        (0, -5): pg.transform.rotozoom(base_img, 90, 1.0),
+        (-5, 5): pg.transform.rotozoom(base_img, -45, 1.0),
+        (0, 5): pg.transform.rotozoom(base_img, -90, 1.0),
+        (5, 0): flipped,
+        (5, -5): pg.transform.rotozoom(flipped, -45, 1.0),
+        (5, 5): pg.transform.rotozoom(flipped, 45, 1.0),
+    }
+    return kk_imgs.get(sum_mv, base_img)
+
+
     
 
 def main():
@@ -101,7 +124,7 @@ def main():
 
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
-            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 元に戻す
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  
 
         screen.blit(kk_img, kk_rct)
 
@@ -111,6 +134,11 @@ def main():
         bb_imgs, bb_accs = init_bb_imgs()
         avx = vx*bb_accs[min(tmr//500, 9)]
         bb_img = bb_imgs[min(tmr//500, 9)]
+
+        kk_base_img = pg.image.load("fig/3.png") 
+        kk_img = get_kk_img(tuple(sum_mv), kk_base_img) 
+        screen.blit(kk_img, kk_rct)
+
 
 
         bb_rct.move_ip(vx * acc, vy * acc)

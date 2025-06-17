@@ -47,6 +47,9 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
+        if kk_rct.colliderect(bb_rct): #こうかとん
+            print("ゲームオーバ")
+            return
         screen.blit(bg_img, [0, 0]) 
 
         key_lst = pg.key.get_pressed()
@@ -69,11 +72,11 @@ def main():
         screen.blit(kk_img, kk_rct)
         bb_rct.move_ip(vx,vy) #爆弾の移動
         yoko, tate = check_bound(bb_rct)
-        if not yoko: #
+        if not yoko: 
             vx *= -1
         if not tate:
             vy *= -1
-        screen.blit(bb_img, bb_rct) #
+        screen.blit(bb_img, bb_rct) 
         pg.display.update()
         tmr += 1
         clock.tick(50)

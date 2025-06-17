@@ -28,6 +28,10 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 def gameover(screen: pg.Surface) -> None:
+    """
+    引数: 画面のSurface (screen)\n
+    概要: ゲームオーバー時に, 半透明の黒い画面上に「Game Over」と表示し, 泣いているこうかとん画像を貼り付ける関数
+    """
     bg = pg.Surface((WIDTH, HEIGHT))
     bg.set_alpha(200)
     bg.fill((0, 0, 0))
@@ -46,6 +50,9 @@ def gameover(screen: pg.Surface) -> None:
     time.sleep(5)  
 
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    爆弾の画像リストと加速度リストを返す
+    """
     bb_imgs = []
     bb_accs = [a for a in range(1, 11)]
     for r in range(1, 11):
@@ -56,6 +63,9 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     return bb_imgs, bb_accs
 
 def get_kk_img(sum_mv: tuple[int, int], base_img: pg.Surface) -> pg.Surface:
+    """
+    概要: 移動量の合計値タプルに対応する向きの画像Surfaceを返す
+    """
     flipped = pg.transform.flip(base_img, True, False)
     kk_imgs = {
         (0, 0): base_img,
@@ -70,20 +80,6 @@ def get_kk_img(sum_mv: tuple[int, int], base_img: pg.Surface) -> pg.Surface:
     }
     return kk_imgs.get(sum_mv, base_img)
 
-import math
-
-def calc_orientation(org: pg.Rect, dst: pg.Rect, current_xy: tuple[float, float]) -> tuple[float, float]:
-    dx = dst.centerx - org.centerx
-    dy = dst.centery - org.centery
-    distance = math.hypot(dx, dy)
-    if distance == 0:
-        return (0, 0)
-    if distance < 300:
-        return current_xy
-    scale = math.sqrt(50) / distance
-    vx = dx * scale
-    vy = dy * scale
-    return vx, vy
 
     
 
@@ -143,9 +139,6 @@ def main():
         kk_base_img = pg.image.load("fig/3.png") 
         kk_img = get_kk_img(tuple(sum_mv), kk_base_img) 
         screen.blit(kk_img, kk_rct)
-
-        vx, vy = calc_orientation(bb_rct, kk_rct, (vx, vy))
-
 
 
 
